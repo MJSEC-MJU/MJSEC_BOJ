@@ -1,0 +1,20 @@
+<table>
+    <thead>
+        <tr>
+            <th>Rank</th>
+            <th>User ID</th>
+            <th>Solved Problems</th>
+            <th>Total Score</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for result in results %}
+        <tr>
+            <td>{{ result.rank }}</td>
+            <td>{{ result.user_id__user_id }}</td>  <!-- 여기에서 user_id를 실제 사용자 ID로 표시합니다. -->
+            <td>{{ result.solved_count }}</td>
+            <td>{{ result.total_score }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>

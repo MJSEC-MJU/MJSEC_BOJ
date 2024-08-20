@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Submit Solution</title>
+</head>
+<body>
+    <h1>Submit Solution</h1>
+    <form method="post">
+        {% csrf_token %}
+        <label for="user_id">User ID:</label>
+        <input type="text" id="user_id" name="user_id">
+        <label for="problem_id">Problem ID:</label>
+        <input type="number" id="problem_id" name="problem_id">
+        <button type="submit">Submit</button>
+    </form>
+</body>
+</html>

@@ -13,6 +13,7 @@ pip-delete-this-directory.txt
 
 # SQLite database
 solved_problems.db
+db.sqlite3
 
 # Jupyter Notebook
 .ipynb_checkpoints

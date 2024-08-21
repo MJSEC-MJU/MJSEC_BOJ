@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>문제 {{ problem.problem_id }}</title>
+</head>
+<body>
+    <h1>문제 {{ problem.problem_id }}</h1>
+    <p>Point: {{ problem.points }}pts</p>
+    <p>Solves: {{ solved_count }}</p>
+
+    <!-- 메시지 출력 -->
+    {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+
+    <!-- 제출 폼 -->
+    <form action="{% url 'competition:submit' %}" method="post">
+        {% csrf_token %}
+        <input type="hidden" name="problem_id" value="{{ problem.problem_id }}">
+        <input type="hidden" name="user_id" value="{{ user.username }}">
+        <button type="submit">제출하기</button>
+    </form>
+    <a href="{% url 'feed:index' %}">피드로 돌아가기</a>
+</body>
+</html>

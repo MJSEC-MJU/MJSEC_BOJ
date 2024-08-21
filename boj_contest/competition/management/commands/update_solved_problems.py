@@ -14,7 +14,12 @@ class Command(BaseCommand):
         problem_id = kwargs['problem_id']
 
         def is_problem_solved_by_user(user_id, problem_id):
-            return Submission.objects.filter(user_id__user_id=user_id, problem_id__problem_id=problem_id).exists()
+            try:
+                participant = Participant.objects.get(user_id__username=user_id)
+                return Submission.objects.filter(user_id=participant, problem_id__problem_id=problem_id).exists()
+            except Participant.DoesNotExist:
+                self.stderr.write(f"Participant with User ID {user_id} does not exist.")
+                return False
 
         def update_newly_solved_problems(user_id, problem_id):
             base_url = "https://solved.ac/api/v3/search/problem"
@@ -30,7 +35,10 @@ class Command(BaseCommand):
                 return False
 
             page_size = 50
-            max_page = (total_problems_solved + page_size - 1) // page_size
+            if total_problems_solved == 0:
+                return False
+            else:
+                max_page = (total_problems_solved + page_size - 1) // page_size
             low, high = 1, max_page
 
             while low <= high:
@@ -67,11 +75,6 @@ class Command(BaseCommand):
                     return False
 
                 if min_problem_id <= problem_id <= max_problem_id:
-                    #new_problems = [p for p in problems if not is_problem_solved_by_user(user_id, int(p['problemId']))]
-                    #for problem in new_problems:
-                    #    problem_obj, created = ContestProblem.objects.get_or_create(problem_id=int(problem['problemId']))
-                    #    Submission.objects.get_or_create(user_id=Participant.objects.get(user_id=user_id), problem_id=problem_obj)
-                    #return True
                     if problem_id in problem_ids:
                         return True
                     else:

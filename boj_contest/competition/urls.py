@@ -1,7 +1,7 @@
 # competition/urls.py
 from django.urls import path
 from . import views
-
+app_name = 'competition'
 urlpatterns = [
     path('', views.index, name='index'),
     path('register/', views.register_participant, name='register'),

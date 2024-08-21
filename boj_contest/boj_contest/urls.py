@@ -17,8 +17,13 @@ Including another URLconf
 # contest/urls.py
 from django.contrib import admin
 from django.urls import path, include
-
+from competition.views import redirect_based_on_login
 urlpatterns = [
+    path('', redirect_based_on_login, name='redirect_based_on_login'),
     path('admin/', admin.site.urls),
     path('competition/', include('competition.urls')),
+    path('feed/', include('feed.urls')),
+    path('user/', include('user.urls'))
+    
+    
 ]

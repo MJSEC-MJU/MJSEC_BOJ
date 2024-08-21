@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Feed</title>
+    <style>
+        .solved { color: green; }
+        .unsolved { color: black; }
+    </style>
+</head>
+<body>
+    <h1>Latest Feed</h1>
+    <ul>
+        {% for item in feed_items %}
+            <li class="{% if item.is_solved %}solved{% else %}unsolved{% endif %}">
+                <h2>
+                    <a href="{% url 'feed:problem_detail' problem_id=item.problem.problem_id %}">
+                        {{ item.title }}
+                    </a>
+                </h2>
+                <p>{{ item.problem.points }}pts</p>
+                <p>Solves: {{ item.solved_count }}</p>
+            </li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'competition:results' %}">순위표 보기</a>
+    {% if request.user.is_authenticated %}
+        <p><a href="{% url 'user:logout' %}">로그아웃</a></p>
+    {% endif %}
+</body>
+</html>

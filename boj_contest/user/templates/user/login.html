@@ -1,26 +1,143 @@
-<!-- templates/user/login.html -->
+{% load static %}
 <!DOCTYPE html>
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <title>로그인</title>
+    <title>로그인 | MJSEC BOJ CONTEST</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #f0f0f0;
+            font-family: 'Roboto', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: #222;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        .logo {
+            margin-bottom: 20px;
+        }
+
+        .logo img {
+            max-width: 120px; /* 최대 너비를 120px로 설정 */
+            height: auto;     /* 비율을 유지하면서 높이 자동 조정 */
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+            font-weight: 700;
+            color: #61dafb;
+        }
+
+        h2 {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            font-weight: 500;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        label {
+            font-size: 0.9rem;
+            color: #f0f0f0;
+            text-align: left;
+            margin-bottom: 5px;
+        }
+
+        input[type="text"], input[type="password"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #444;
+            border-radius: 5px;
+            background-color: #333;
+            color: #f0f0f0;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #61dafb;
+            color: #1a1a1a;
+            border: none;
+            padding: 12px;
+            font-size: 1rem;
+            font-weight: 500;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            width: 100%;
+        }
+
+        button:hover {
+            background-color: #4ea5cf;
+        }
+
+        .messages {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+            width: 100%;
+        }
+
+        .messages li {
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #ff6b6b;
+            color: #1a1a1a;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+
+        .messages .success {
+            background-color: #2dce89;
+            color: #1a1a1a;
+        }
+    </style>
 </head>
 <body>
-    <h2>로그인</h2>
-    <form method="post">
-        {% csrf_token %}
-        <label for="username">사용자명:</label>
-        <input type="text" id="username" name="username" required><br>
-        <label for="password">비밀번호:</label>
-        <input type="password" id="password" name="password" required><br>
-        <button type="submit">로그인</button>
-    </form>
-    {% if messages %}
-        <ul>
-            {% for message in messages %}
-                <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
-    {% endif %}
+    <div class="container">
+        <!-- 로고 부분 -->
+        <div class="logo">
+            <img src="{% static 'images/logo.png' %}" alt="로고">
+        </div>
+        <!-- 제목 부분 -->
+        <h1>MJSEC BOJ CONTEST</h1>
+        <h2>Login</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="username">아이디:</label>
+            <input type="text" id="username" name="username" required>
+            <label for="password">패스워드:</label>
+            <input type="password" id="password" name="password" required>
+            <button type="submit">로그인</button>
+        </form>
+        {% if messages %}
+            <ul class="messages">
+                {% for message in messages %}
+                    <li class="{{ message.tags }}">{{ message }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </div>
 </body>
 </html>

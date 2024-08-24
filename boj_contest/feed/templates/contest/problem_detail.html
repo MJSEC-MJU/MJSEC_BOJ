@@ -98,6 +98,17 @@
             background-color: #4ea5cf;
         }
 
+        /* 추가된 CSS 코드 */
+        .submit-button.submitting {
+            background-color: #444;
+            color: #ccc;
+            cursor: not-allowed;
+        }
+
+        .submit-button.submitting:hover {
+            background-color: #444;
+        }
+
         .back-button {
             background-color: #444;
             color: #f0f0f0;
@@ -178,5 +189,18 @@
             <button class="back-button" onclick="window.location.href='{% url 'feed:index' %}'">피드로 돌아가기</button>
         </div>
     </div>
+
+    <!-- 클라이언트 측 중복 제출 방지 스크립트 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const submitButton = document.querySelector('.submit-button');
+
+            document.querySelector('form').addEventListener('submit', function() {
+                submitButton.classList.add('submitting');
+                submitButton.disabled = true;
+                submitButton.textContent = '제출 중...'; // 버튼 텍스트 변경
+            });
+        });
+    </script>
 </body>
 </html>

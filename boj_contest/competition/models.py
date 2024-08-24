@@ -34,7 +34,7 @@ class ContestProblem(models.Model):
         solved_count = Submission.objects.filter(problem_id=self).values('user_id').distinct().count()
         # 전체 참가자 수를 계산합니다
         total_participants = Participant.objects.count()
-        max_decrement_factor = 0.99
+        max_decrement_factor = 0.90
         if total_participants > 0:
             # 점수 감소 비율 계산
             if solved_count > 1:

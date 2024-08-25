@@ -1,0 +1,21 @@
+# Python 이미지를 베이스로 사용
+FROM python:3.10
+
+# 애플리케이션 디렉토리 생성
+WORKDIR /app
+
+# 종속성 파일 복사
+COPY requirements.txt /app/
+
+# 종속성 설치
+RUN pip install --no-cache-dir -r requirements.txt
+
+# 프로젝트 코드 복사
+COPY . /app/
+
+# 정적 파일 수집
+RUN python manage.py collectstatic --noinput
+
+# Gunicorn을 사용하여 Django 애플리케이션 실행
+CMD ["gunicorn", "--bind", "0.0.0.0:8000", "boj_contest.wsgi:application"]
+

@@ -18,6 +18,8 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 from competition.views import redirect_based_on_login
+from django.conf import settings
+from django.conf.urls.static import static
 urlpatterns = [
     path('', redirect_based_on_login, name='redirect_based_on_login'),
     path('admin/', admin.site.urls),
@@ -26,4 +28,4 @@ urlpatterns = [
     path('user/', include('user.urls'))
     
     
-]
+]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

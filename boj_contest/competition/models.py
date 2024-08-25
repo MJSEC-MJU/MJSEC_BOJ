@@ -13,11 +13,13 @@ class Participant(models.Model):
 class ContestProblem(models.Model):
     id = models.AutoField(primary_key=True)  # ID 필드를 명시적으로 추가합니다.
     problem_id = models.IntegerField(unique=True)
-    points = models.IntegerField(default=1000)
+    points = models.IntegerField(default=1000)  # 현재 점수
     min_points = models.IntegerField(default=100)  # 최소 점수
+    initial_points = models.IntegerField(default=1000)  # 초기 점수
 
     def __str__(self):
         return str(self.problem_id)
+
     def get_absolute_url(self):
         return reverse('feed:problem_detail', kwargs={'pk': self.pk})
 
@@ -30,26 +32,25 @@ class ContestProblem(models.Model):
             self.create_feed_entry()
 
     def update_problem_score(self):
-        # 현재 문제의 점수를 업데이트하는 로직
+        # 현재 문제를 해결한 사용자 수를 계산합니다.
         solved_count = Submission.objects.filter(problem_id=self).values('user_id').distinct().count()
-        # 전체 참가자 수를 계산합니다
+        # 전체 참가자 수를 계산합니다.
         total_participants = Participant.objects.count()
         max_decrement_factor = 0.90
-        if total_participants > 0:
-            # 점수 감소 비율 계산
-            if solved_count > 1:
-                decrement_factor = min(max_decrement_factor, max_decrement_factor * (solved_count-1) / total_participants)
-            else:
-                decrement_factor = 0
 
-            # 초기 점수에서 점수를 감소시킵니다
-            initial_points = self.points
-            new_points = initial_points * (1 - decrement_factor)
-            new_points = max(new_points, self.min_points)  # 최소 점수 이하로 떨어지지 않도록 합니다
+        if total_participants > 1:
+            # 점수 감소 비율 계산
+            decrement_factor = max_decrement_factor * (solved_count - 1) / total_participants if solved_count > 1 else 0
+            decrement_factor = min(decrement_factor, max_decrement_factor)
+
+            # 초기 점수에서 점수를 감소시킵니다.
+            new_points = self.initial_points * (1 - decrement_factor)
+            # 최소 점수 이하로 떨어지지 않도록 합니다.
+            new_points = max(new_points, self.min_points)
         else:
             new_points = self.points
-        
-        # 점수 업데이트 후 save() 호출 대신 직접 업데이트
+
+        # 점수를 업데이트합니다.
         ContestProblem.objects.filter(pk=self.pk).update(points=new_points)
 
     def create_feed_entry(self):

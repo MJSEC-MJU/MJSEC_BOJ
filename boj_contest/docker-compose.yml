@@ -1,12 +1,32 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
     build: .
-    command: gunicorn boj_contest.wsgi:application --bind 0.0.0.0:80 --workers 4
+    command: >
+      sh -c "python manage.py migrate &&
+             python manage.py collectstatic --noinput &&
+             gunicorn boj_contest.wsgi:application --bind 0.0.0.0:8000"
     volumes:
       - .:/app
+      - boj_contest_static_volume:/app/staticfiles
+      - boj_contest_media_volume:/app/media
+    ports:
+      - "8000:8000"
+    environment:
+      - DJANGO_SETTINGS_MODULE=boj_contest.settings
+
+  nginx:
+    image: nginx:latest
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - boj_contest_static_volume:/staticfiles
+      - boj_contest_media_volume:/media
     ports:
       - "80:80"
-    environment:
-      - DJANGO_ALLOWED_HOSTS=localhost,127.0.0.1
+    depends_on:
+      - web
+
+volumes:
+  boj_contest_static_volume:
+  boj_contest_media_volume:

@@ -3,10 +3,11 @@ from django.shortcuts import render, get_object_or_404, redirect
 from .models import Feed 
 from competition.models import Submission,Participant,ContestProblem
 from django.http import HttpResponseBadRequest
+from django.db.models import Count, Q
 @login_required
 def feed_view(request):
     # 피드 항목을 생성일 내림차순으로 가져옵니다
-    feed_items = Feed.objects.order_by('-created_at')
+    feed_items = Feed.objects.select_related('problem').order_by('-created_at')
 
     # 현재 로그인한 사용자의 Participant 인스턴스를 가져옵니다
     try:
@@ -14,26 +15,43 @@ def feed_view(request):
     except Participant.DoesNotExist:
         participant = None
 
-    # 로그인한 사용자가 문제를 해결했는지 확인합니다
     if participant:
+        # 사용자가 맞춘 문제의 ID 집합
         solved_problem_ids = set(
-            Submission.objects.filter(user_id=participant).values_list('problem_id', flat=True)
+            Submission.objects.filter(user_id=participant, is_correct=True)
+                                .values_list('problem_id', flat=True)
         )
-        # 피드 항목을 수정하여 문제 해결 여부를 포함합니다
-        for item in feed_items:
-            item.is_solved = item.problem.id in solved_problem_ids
-            item.solved_count = Submission.objects.filter(problem_id=item.problem).count()
     else:
-        # 인증되지 않은 경우 기본적으로 해결된 문제를 설정하지 않습니다
-        for item in feed_items:
-            item.is_solved = False
-            item.solved_count = Submission.objects.filter(problem_id=item.problem).count()
+        solved_problem_ids = set()
+
+    # 피드에 포함된 모든 문제의 ID 리스트
+    problem_ids = [item.problem.id for item in feed_items]
+
+    # 각 문제별로 맞춘 사용자 수를 계산 (is_correct=True인 경우만)
+    solved_counts = Submission.objects.filter(problem_id__in=problem_ids, is_correct=True) \
+                                      .values('problem_id') \
+                                      .annotate(solved_count=Count('user_id', distinct=True))
+
+    # 문제 ID를 키로 하고 solved_count를 값으로 하는 딕셔너리 생성
+    solved_counts_dict = {item['problem_id']: item['solved_count'] for item in solved_counts}
+
+    # 피드 항목에 is_solved와 solved_count 추가
+    for item in feed_items:
+        item.is_solved = item.problem.id in solved_problem_ids
+        item.solved_count = solved_counts_dict.get(item.problem.id, 0)
 
     return render(request, 'feed/feed.html', {'feed_items': feed_items})
+
 @login_required
 def problem_detail(request, problem_id):
     problem = get_object_or_404(ContestProblem, problem_id=problem_id)
-    solved_count = Submission.objects.filter(problem_id=problem).count()
+    
+    # is_correct=True인 제출을 한 고유한 사용자 수를 카운트
+    solved_count = Submission.objects.filter(problem_id=problem, is_correct=True) \
+                                     .values('user_id') \
+                                     .distinct() \
+                                     .count()
+    
     return render(request, 'contest/problem_detail.html', {'problem': problem, 'solved_count': solved_count})
 @login_required
 def submit_solution(request, pk):

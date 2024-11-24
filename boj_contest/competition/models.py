@@ -1,9 +1,12 @@
+# competition/models.py
+
 from django.db import models
 from django.utils import timezone
 from feed.models import Feed
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.urls import reverse
+
 class Participant(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
 
@@ -33,7 +36,7 @@ class ContestProblem(models.Model):
 
     def update_problem_score(self):
         # 현재 문제를 해결한 사용자 수를 계산합니다.
-        solved_count = Submission.objects.filter(problem_id=self).values('user_id').distinct().count()
+        solved_count = Submission.objects.filter(problem_id=self, is_correct=True).values('user_id').distinct().count()
         # 전체 참가자 수를 계산합니다.
         total_participants = Participant.objects.count()
         max_decrement_factor = 0.90
@@ -59,16 +62,17 @@ class ContestProblem(models.Model):
             title=f"Problem: {self.problem_id}",
             content=f"A new problem has been added: {self.problem_id}. It has {self.points} points.",
             problem=self
-            
         )
-
 
 class Submission(models.Model):
     user_id = models.ForeignKey(Participant, on_delete=models.CASCADE)
     problem_id = models.ForeignKey(ContestProblem, on_delete=models.CASCADE)
-    submission_time = models.DateTimeField(default=timezone.now)
-    score = models.FloatField(default=0)  # 점수 필드 추가
-
-    def __str__(self):
-        return f"{self.user_id} - {self.problem_id}"
+    score = models.IntegerField(default=0)
+    is_correct = models.BooleanField(default=False)
+    submission_time = models.DateTimeField(auto_now_add=True)
     
+    class Meta:
+        ordering = ['-submission_time']
+        indexes = [
+            models.Index(fields=['user_id', 'problem_id', 'is_correct']),
+        ]

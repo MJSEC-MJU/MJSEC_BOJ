@@ -105,7 +105,7 @@
 
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        function fetchAndUpdateResults() {
             fetch('{% url "competition:results" %}', {
                 headers: {
                     'X-Requested-With': 'XMLHttpRequest'
@@ -113,8 +113,9 @@
             })
             .then(response => response.json())
             .then(data => {
+                // Update chart
                 const traces = [];
-
+    
                 Object.keys(data.results).forEach((user, index) => {
                     const userData = data.results[user];
                     
@@ -129,7 +130,7 @@
                     
                     traces.push(trace);
                 });
-
+    
                 const layout = {
                     title: 'RANKING TOP 5',
                     xaxis: {
@@ -148,10 +149,36 @@
                         color: '#f0f0f0'
                     }
                 };
-
+    
                 Plotly.newPlot('chart', traces, layout);
+    
+                // Update table
+                const tableBody = document.querySelector('table tbody');
+                tableBody.innerHTML = ''; // Clear existing table rows
+    
+                let rank = 1;
+                Object.keys(data.results).forEach(user => {
+                    const userData = data.results[user];
+                    const solvedCount = userData.scores.length;
+                    const totalScore = userData.scores[userData.scores.length - 1];
+    
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${rank}</td>
+                        <td>${user}</td>
+                        <td>${solvedCount}</td>
+                        <td>${totalScore}</td>
+                    `;
+                    tableBody.appendChild(row);
+                    rank++;
+                });
             })
             .catch(error => console.error('Error fetching data:', error));
+        }
+    
+        document.addEventListener('DOMContentLoaded', function() {
+            fetchAndUpdateResults(); // Initial call to display the chart and table
+            setInterval(fetchAndUpdateResults, 1000); // Refresh every 5 seconds
         });
     </script>
 </body>

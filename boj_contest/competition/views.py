@@ -216,8 +216,8 @@ def contest_results(request):
             user_scores[username]['times'].append(submission_time)
             user_scores[username]['scores'].append(current_score)
 
-        # 상위 5명의 사용자만 선택합니다
-        top_users = sorted(user_scores.keys(), key=lambda k: (max(user_scores[k]['scores']), -min(user_scores[k]['times']).timestamp()), reverse=True)[:5]
+        
+        top_users = sorted(user_scores.keys(), key=lambda k: (max(user_scores[k]['scores']), -min(user_scores[k]['times']).timestamp()), reverse=True)[:]
 
         top_user_scores = {
             user: {

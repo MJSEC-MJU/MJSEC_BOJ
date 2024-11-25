@@ -116,7 +116,7 @@
                 // Update chart
                 const traces = [];
     
-                Object.keys(data.results).forEach((user, index) => {
+                Object.keys(data.results).slice(0,5).forEach((user, index) => {
                     const userData = data.results[user];
                     
                     const trace = {

@@ -41,7 +41,7 @@ MJSEC 백준 프로그래밍 대회를 위한 웺사이트 입니다.
 2. 프로젝트 클론:
     ```sh
     git clone https://github.com/MJSEC-MJU/MJSEC_BOJ.git
-    cd CTF_XSS/ctf_project
+    cd MJSEC_BOJ/boj_contest
     ```
 
 ## 가상환경 설정

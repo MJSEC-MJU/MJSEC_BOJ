@@ -20,7 +20,7 @@ MJSEC 백준 프로그래밍 대회를 위한 웺사이트 입니다.
 | **웹 프레임워크** | ![Django](https://img.shields.io/badge/Django-5.1-green?logo=django)                                      |
 | **데이터베이스**  | ![SQLite](https://img.shields.io/badge/SQLite-latest-B3B3B3?logo=sqlite)                                  |
 | **배포 도구**     | ![Docker](https://img.shields.io/badge/Docker-latest-blue?logo=docker) <br> ![Docker Compose](https://img.shields.io/badge/Docker%20Compose-2.21.0-blue?logo=docker) |
-| **웹 서버**       | ![Gunicorn](https://img.shields.io/badge/Gunicorn-23.0.0-343434?logo=gunicorn) <br> ![Nginx](https://img.shields.io/badge/Nginx-latest-009639?logo=nginx) |
+| **웹 서버**       | ![Gunicorn](https://img.shields.io/badge/Gunicorn-20.1.0-343434?logo=gunicorn) <br> ![Nginx](https://img.shields.io/badge/Nginx-latest-009639?logo=nginx) |
 | **버전 관리**     | ![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?logo=github&logoColor=white)               |
 
 

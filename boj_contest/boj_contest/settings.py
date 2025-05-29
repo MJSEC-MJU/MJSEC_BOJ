@@ -10,124 +10,130 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
-from pathlib import Path
 import os
+from pathlib import Path
+
+import environ
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-LOGIN_URL = '/user/login/'
 
-# Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
+# -----------------------------------------------------------------------------
+# Read environment variables from .env
+# -----------------------------------------------------------------------------
+env = environ.Env(
+    # set casting, default value
+    DEBUG=(bool, False)
+)
+# read .env file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'z0_h6erDopKMYGGs4ISZ7ENLtfm1npI8at8TsJ-wQAaIupLG1U7MhraCPAOVt6RdirQ'
+# -----------------------------------------------------------------------------
+# SECURITY
+# -----------------------------------------------------------------------------
+SECRET_KEY = env("DJANGO_SECRET_KEY")        # must be set in .env
+DEBUG      = env("DEBUG")                    # default False if missing
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+LOGIN_URL          = "/user/login/"
+LOGIN_REDIRECT_URL = "/feed/"
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ["*"]
 
 
+# -----------------------------------------------------------------------------
 # Application definition
-
+# -----------------------------------------------------------------------------
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-    'competition',
-    'feed',
-    'user',
-]
-\
-MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
+    "competition",
+    "feed",
+    "user",
 ]
 
-ROOT_URLCONF = 'boj_contest.urls'
+MIDDLEWARE = [
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
+]
+
+ROOT_URLCONF = "boj_contest.urls"
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates'],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [ BASE_DIR / "templates" ],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'boj_contest.wsgi.application'
+WSGI_APPLICATION = "boj_contest.wsgi.application"
 
 
+# -----------------------------------------------------------------------------
 # Database
-# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# -----------------------------------------------------------------------------
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
 
+# -----------------------------------------------------------------------------
 # Password validation
-# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
-
+# -----------------------------------------------------------------------------
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 
+# -----------------------------------------------------------------------------
 # Internationalization
-# https://docs.djangoproject.com/en/4.2/topics/i18n/
-
-# 언어 설정
-LANGUAGE_CODE = 'ko-kr'
-
-# 시간대 설정
-TIME_ZONE = 'Asia/Seoul'
-
-# 국제화 설정
-USE_I18N = True
-
-# 시간대 인식 설정
-USE_TZ = True
+# -----------------------------------------------------------------------------
+LANGUAGE_CODE = "ko-kr"
+TIME_ZONE     = "Asia/Seoul"
+USE_I18N      = True
+USE_TZ        = True
 
 
+# -----------------------------------------------------------------------------
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
+# -----------------------------------------------------------------------------
+STATIC_URL        = "static/"
+STATIC_ROOT       = os.path.join(BASE_DIR, "staticfiles")
+STATICFILES_DIRS  = [ BASE_DIR / "static" ]
 
-STATIC_URL = 'static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]
+
+# -----------------------------------------------------------------------------
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
-
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+# -----------------------------------------------------------------------------
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

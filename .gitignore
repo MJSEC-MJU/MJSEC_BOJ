@@ -32,3 +32,6 @@ Desktop.ini
 # PyCharm
 .idea/
 *.idea/
+
+# ssl 인증서
+certs

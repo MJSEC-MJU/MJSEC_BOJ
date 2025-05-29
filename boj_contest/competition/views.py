@@ -173,7 +173,7 @@ def contest_results(request):
         .annotate(
             solved_count=Count('problem_id', distinct=True),
             total_score=Sum('problem_id__points'),
-            last_submission_time=Min('submission_time', filter=Q(is_correct=True))
+            last_submission_time=Max('submission_time', filter=Q(is_correct=True))
         )
         .order_by('-total_score', 'last_submission_time')  # 점수 내림차순, 마지막 성공 제출 시간 오름차순
     )

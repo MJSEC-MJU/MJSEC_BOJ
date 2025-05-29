@@ -1,8 +1,8 @@
 # competition/management/commands/update_solved_problems.py
 from django.core.management.base import BaseCommand
 import requests
-from competition.models import Participant, ContestProblem, Submission
 from django.utils import timezone
+from competition.models import Participant, ContestProblem, Submission
 
 class Command(BaseCommand):
     help = 'Fetch solved problems and update the database'
@@ -15,13 +15,14 @@ class Command(BaseCommand):
         user_id    = kwargs['user_id']
         problem_id = kwargs['problem_id']
 
+        # 참가자/문제 조회
         try:
             participant = Participant.objects.get(user_id__username=user_id)
             problem     = ContestProblem.objects.get(problem_id=problem_id)
         except (Participant.DoesNotExist, ContestProblem.DoesNotExist):
             return
 
-        # 이미 정답 처리된 적이 있으면 아무것도 안 함
+        # 이미 맞은 기록이 있으면 아무 작업도 안 함
         if Submission.objects.filter(user_id=participant,
                                      problem_id=problem,
                                      is_correct=True).exists():
@@ -37,26 +38,30 @@ class Command(BaseCommand):
             try:
                 r = requests.get(url, params=params, timeout=10)
                 r.raise_for_status()
-                return r.json().get('count',0) > 0
-            except:
+                return r.json().get('count', 0) > 0
+            except requests.RequestException:
                 return False
 
         solved = check_solved_ac(user_id, problem_id)
         now    = timezone.now()
 
         if solved:
-            # 정답이면 하나만 남기고 업데이트
-            Submission.objects.update_or_create(
+            # 1) 기존 모든 제출 기록 삭제
+            Submission.objects.filter(
+                user_id=participant,
+                problem_id=problem
+            ).delete()
+
+            # 2) 새로 정답 Submission 하나만 생성
+            Submission.objects.create(
                 user_id=participant,
                 problem_id=problem,
-                defaults={
-                    'is_correct':     True,
-                    'score':          problem.points,
-                    'submission_time': now,
-                }
+                is_correct=True,
+                score=problem.points,
+                submission_time=now,
             )
         else:
-            # 오답이면 새 레코드 생성 → 페널티(지연) 로직에서 count를 셀 수 있음
+            # 오답은 그냥 누적 기록 (패널티 로직용)
             Submission.objects.create(
                 user_id=participant,
                 problem_id=problem,

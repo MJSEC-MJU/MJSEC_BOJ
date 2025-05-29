@@ -22,10 +22,12 @@ services:
     image: nginx:latest
     volumes:
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - ./certs:/etc/nginx/certs:ro
       - boj_contest_static_volume:/staticfiles
       - boj_contest_media_volume:/media
     ports:
       - "80:80"
+      - "443:443"
     depends_on:
       - web
 

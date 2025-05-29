@@ -37,7 +37,7 @@ DEBUG      = env("DEBUG")                    # default False if missing
 LOGIN_URL          = "/user/login/"
 LOGIN_REDIRECT_URL = "/feed/"
 
-ALLOWED_HOSTS = ["*"]
+ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(",")
 
 
 # -----------------------------------------------------------------------------

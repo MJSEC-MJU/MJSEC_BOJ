@@ -176,7 +176,9 @@ def contest_results(request):
             last_submission_time=Max('submission_time', filter=Q(is_correct=True))
         )
         .order_by('-total_score', 'last_submission_time')  # 점수 내림차순, 마지막 성공 제출 시간 오름차순
+        
     )
+    
 
     ranked_results = []
     rank = 1
@@ -217,7 +219,7 @@ def contest_results(request):
             user_scores[username]['scores'].append(current_score)
 
         
-        top_users = sorted(user_scores.keys(), key=lambda k: (max(user_scores[k]['scores']), -min(user_scores[k]['times']).timestamp()), reverse=True)[:]
+        top_users = sorted(user_scores.keys(), key=lambda k: (max(user_scores[k]['scores']), -max(user_scores[k]['times']).timestamp()), reverse=True)[:]
 
         top_user_scores = {
             user: {

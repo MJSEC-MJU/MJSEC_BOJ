@@ -56,11 +56,13 @@ MJSEC 백준 프로그래밍 대회를 위한 웺사이트 입니다.
     ```sh
     python -c 'import secrets; print(secrets.token_urlsafe(50))'
     ```
-    생성된 Secret Key를 `boj_contest/settings.py` 파일의 `SECRET_KEY` 변수에 추가합니다.
+    생성된 Secret Key를 `.env` 파일의 `SECRET_KEY` 환경 변수에 추가합니다.
 
-3. `boj_contest/settings.py` 파일에서 `ALLOWED_HOSTS` 설정 변경:
+3. `.env` 파일에서 `ALLOWED_HOSTS` 설정 변경:
     ```python
-    ALLOWED_HOSTS = ["your_domain"]
+    DEBUG=0
+    DJANGO_ALLOWED_HOSTS=127.0.0.1,localhost,도메인주소
+    DJANGO_SECRET_KEY= 키값
     ```
 
 ## 도커 컨테이너 실행

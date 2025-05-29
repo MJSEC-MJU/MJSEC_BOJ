@@ -33,12 +33,13 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 # -----------------------------------------------------------------------------
 SECRET_KEY = env("DJANGO_SECRET_KEY")        # must be set in .env
 DEBUG      = env("DEBUG")                    # default False if missing
-
+SESSION_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE    = True
 LOGIN_URL          = "/user/login/"
 LOGIN_REDIRECT_URL = "/feed/"
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(",")
-
+CSRF_TRUSTED_ORIGINS = env("DJANGO_ALLOWED_HOSTS").split(",")
 
 # -----------------------------------------------------------------------------
 # Application definition

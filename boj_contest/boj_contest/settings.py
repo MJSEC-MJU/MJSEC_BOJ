@@ -39,7 +39,9 @@ LOGIN_URL          = "/user/login/"
 LOGIN_REDIRECT_URL = "/feed/"
 
 ALLOWED_HOSTS = env("DJANGO_ALLOWED_HOSTS").split(",")
-CSRF_TRUSTED_ORIGINS = env("DJANGO_ALLOWED_HOSTS").split(",")
+CSRF_TRUSTED_ORIGINS = [
+    f"https://{host.strip()}" for host in ALLOWED_HOSTS
+]
 
 # -----------------------------------------------------------------------------
 # Application definition
